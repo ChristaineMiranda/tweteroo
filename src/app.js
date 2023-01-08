@@ -26,6 +26,18 @@ server.post("/sign-up", (req, res) => {
     res.status(422).send("Por favor, preencha o campo usuário e avatar corretamente")
 })
 
+server.post("/tweets", (req, res) => {
+    const { username, tweet } = req.body;
+    if (usuariosArmazenados.find(usuario => usuario.nome === username)) {
+        const novoTweet = { nome: username, tweet: tweet };
+        tweetsArmazenados.push(novoTweet);
+        res.status(201).send("OK");
+        return;
+    }
+
+    res.status(401).send("UNAUTHORIZED")
+})
+
 
 
 
