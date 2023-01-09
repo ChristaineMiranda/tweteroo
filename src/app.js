@@ -13,23 +13,21 @@ server.listen(PORT, () => {
     console.log("Servidor está no ar!");
 })
 
-server.post("/sign-up", (req, res) => {
-
+server.post("/sign-up", (req, res) => {    
     const { username, avatar } = req.body;
-    if (username && avatar) {
+    if (typeof(username) === "string" && typeof(avatar) === "string") {
         const novoUsuario = { nome: username, avatar: avatar };
         usuariosArmazenados.push(novoUsuario);
         res.status(201).send("OK");
         return;
     }
-
     res.status(400).send("Todos os campos são obrigatórios!");
 })
 
 server.post("/tweets", (req, res) => {
     const { tweet } = req.body;
     const username = req.headers.user
-    if (username && tweet) {
+    if (typeof(tweet) === "string") {
         const indiceUsuario = usuariosArmazenados.findIndex(usuario => usuario.nome === username);
         if (indiceUsuario === -1) {
             res.status(401).send("UNAUTHORIZED");
@@ -47,6 +45,13 @@ server.get("/tweets", (req, res) => {
     const exibirTweets = tweetsArmazenados.slice(-10)
     res.send(exibirTweets)
 })
+
+server.get("/tweets/:USERNAME", (req, res) => {
+    const nomeParametro = req.params.USERNAME;
+    const exibirTweetsNome = tweetsArmazenados.filter( item => item.username === nomeParametro)
+    res.send(exibirTweetsNome)
+})
+
 
 
 
