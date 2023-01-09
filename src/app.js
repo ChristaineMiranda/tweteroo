@@ -15,6 +15,9 @@ server.listen(PORT, () => {
 
 server.post("/sign-up", (req, res) => {    
     const { username, avatar } = req.body;
+    if( username === "" || avatar === ""){
+        return res.sendStatus(400)
+    }
     if (typeof(username) === "string" && typeof(avatar) === "string") {
         const novoUsuario = { nome: username, avatar: avatar };
         usuariosArmazenados.push(novoUsuario);
@@ -27,6 +30,9 @@ server.post("/sign-up", (req, res) => {
 server.post("/tweets", (req, res) => {
     const { tweet } = req.body;
     const username = req.headers.user
+    if( tweet === ""){
+        return res.sendStatus(400)
+    }
     if (typeof(tweet) === "string") {
         const indiceUsuario = usuariosArmazenados.findIndex(usuario => usuario.nome === username);
         if (indiceUsuario === -1) {
