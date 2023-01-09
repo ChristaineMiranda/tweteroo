@@ -19,7 +19,7 @@ server.post("/sign-up", (req, res) => {
     if (username && avatar) {
         const novoUsuario = { nome: username, avatar: avatar };
         usuariosArmazenados.push(novoUsuario);
-        res.send("OK");
+        res.status(201).send("OK");
         return;
     }
 
@@ -28,14 +28,19 @@ server.post("/sign-up", (req, res) => {
 
 server.post("/tweets", (req, res) => {
     const { username, tweet } = req.body;
-    if (usuariosArmazenados.find(usuario => usuario.nome === username)) {
-        const novoTweet = { nome: username, tweet: tweet };
-        tweetsArmazenados.push(novoTweet);
-        res.status(201).send("OK");
-        return;
+    const indiceUsuario = usuariosArmazenados.findIndex(usuario => usuario.nome === username);
+    if(indiceUsuario === -1){
+        res.status(401).send("UNAUTHORIZED");
+        return
     }
+    const novoTweet ={ username: usuariosArmazenados[indiceUsuario].nome, avatar: usuariosArmazenados[indiceUsuario].avatar, tweet: tweet};
+    tweetsArmazenados.push(novoTweet);
+    res.status(201).send("OK");    
+})
 
-    res.status(401).send("UNAUTHORIZED")
+server.get("/tweets", (req, res) => {
+    const exibirTweets = tweetsArmazenados.slice(-10)
+    res.send(exibirTweets)
 })
 
 
