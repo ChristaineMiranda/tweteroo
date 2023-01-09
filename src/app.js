@@ -23,19 +23,24 @@ server.post("/sign-up", (req, res) => {
         return;
     }
 
-    res.status(422).send("Por favor, preencha o campo usuário e avatar corretamente")
+    res.status(400).send("Todos os campos são obrigatórios!");
 })
 
 server.post("/tweets", (req, res) => {
-    const { username, tweet } = req.body;
-    const indiceUsuario = usuariosArmazenados.findIndex(usuario => usuario.nome === username);
-    if(indiceUsuario === -1){
-        res.status(401).send("UNAUTHORIZED");
-        return
+    const { tweet } = req.body;
+    const username = req.headers.user
+    if (username && tweet) {
+        const indiceUsuario = usuariosArmazenados.findIndex(usuario => usuario.nome === username);
+        if (indiceUsuario === -1) {
+            res.status(401).send("UNAUTHORIZED");
+            return
+        }
+        const novoTweet = { username: usuariosArmazenados[indiceUsuario].nome, avatar: usuariosArmazenados[indiceUsuario].avatar, tweet: tweet };
+        tweetsArmazenados.push(novoTweet);
+        res.status(201).send("OK");
+        return;
     }
-    const novoTweet ={ username: usuariosArmazenados[indiceUsuario].nome, avatar: usuariosArmazenados[indiceUsuario].avatar, tweet: tweet};
-    tweetsArmazenados.push(novoTweet);
-    res.status(201).send("OK");    
+    res.status(400).send("Todos os campos são obrigatórios!");
 })
 
 server.get("/tweets", (req, res) => {
